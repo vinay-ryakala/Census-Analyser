@@ -19,8 +19,8 @@ public class CensusAnalyser {
             CsvToBean<IndiaCensusCSV> csvToBean = csvToBeanBuilder.build();
             Iterator<IndiaCensusCSV> censusCSVIterator = csvToBean.iterator();
             Iterable<IndiaCensusCSV> csvIterable = ()->censusCSVIterator;
-            int numOfEateries = (int) StreamSupport.stream(csvIterable.spliterator(),false).count();
-            return numOfEateries;
+            int numOfEnteries = (int) StreamSupport.stream(csvIterable.spliterator(),false).count();
+            return numOfEnteries;
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
@@ -31,7 +31,6 @@ public class CensusAnalyser {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.ERROR_FROM_CSV);
         }
-
     }
 
     public int loadIndiaStateCode(String csvFilePath) throws CensusAnalyserException
@@ -43,14 +42,17 @@ public class CensusAnalyser {
             CsvToBean<IndiaStateCodeCSV> csvToBean = csvToBeanBuilder.build();
             Iterator<IndiaStateCodeCSV> censusCSVIterator = csvToBean.iterator();
             Iterable<IndiaStateCodeCSV> csvIterable = ()->censusCSVIterator;
-            int numOfEateries = (int) StreamSupport.stream(csvIterable.spliterator(),false).count();
-            return numOfEateries;
+            int numOfEnteries = (int) StreamSupport.stream(csvIterable.spliterator(),false).count();
+            return numOfEnteries;
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         }catch (IllegalStateException e){
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.UNABLE_TO_PARSE);
+        }catch (RuntimeException e){
+            throw new CensusAnalyserException(e.getMessage(),
+                    CensusAnalyserException.ExceptionType.ERROR_FROM_CSV);
         }
     }
 }
