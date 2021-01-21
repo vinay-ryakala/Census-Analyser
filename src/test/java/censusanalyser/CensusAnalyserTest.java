@@ -31,7 +31,19 @@ public class CensusAnalyserTest {
         }
     }
     @Test
-        public void givenIndianStateCSV_ShouldReturnExactCount(){
+    public void givenIndiaCensusData_WithWrongFileType_ShouldThrowException() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            ExpectedException exceptionRule = ExpectedException.none();
+            exceptionRule.expect(CensusAnalyserException.class);
+            censusAnalyser.loadIndiaCensusData(INDIA_STATE_CSV_FILE_PATH);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.ERROR_FROM_CSV, e.type);
+        }
+    }
+
+    @Test
+    public void givenIndianStateCSV_ShouldReturnExactCount(){
         try{
             CensusAnalyser censusAnalyser = new CensusAnalyser();
             int numOfRecords = censusAnalyser.loadIndiaStateCode(INDIA_STATE_CSV_FILE_PATH);

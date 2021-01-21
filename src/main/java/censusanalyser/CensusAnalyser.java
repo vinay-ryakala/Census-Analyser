@@ -27,7 +27,11 @@ public class CensusAnalyser {
         }catch (IllegalStateException e){
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.UNABLE_TO_PARSE);
+        }catch (RuntimeException e){
+            throw new CensusAnalyserException(e.getMessage(),
+                    CensusAnalyserException.ExceptionType.ERROR_FROM_CSV);
         }
+
     }
 
     public int loadIndiaStateCode(String csvFilePath) throws CensusAnalyserException
