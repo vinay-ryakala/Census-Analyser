@@ -13,6 +13,7 @@ import java.util.stream.StreamSupport;
 
 public class CensusAnalyser
 {
+    List<IndiaCensusCSV> csvFileList = null;
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException
     {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
@@ -52,20 +53,15 @@ public class CensusAnalyser
         return numOfEntries;
     }
     public String getStateWiseSortedCensusData(String csvFilePath) throws CensusAnalyserException {
-        try( Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
-            ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
-            List<IndiaCensusCSV> censusCSVList = csvBuilder.getCSVFileList(reader, IndiaCensusCSV.class);
-            Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census->census.state);
-            this.sort(censusCSVList, censusComparator);
-            String sortedStateCensusJson = new Gson().toJson(censusCSVList);
-            return sortedStateCensusJson;
-        } catch (IOException e) {
-            throw new CensusAnalyserException(e.getMessage(),
-                    CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
-        }catch (RuntimeException | CSVBuilderException e) {
-            throw new CensusAnalyserException(e.getMessage(),
-                    CensusAnalyserException.ExceptionType.ERROR_FROM_CSV);
+        loadIndiaCensusData(csvFilePath);
+        if (csvFileList == null || csvFileList.size() == 0) {
+            throw new CensusAnalyserException("NO_CENSUS_DATA", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
+
+        Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.state);
+        this.sort(csvFileList, censusComparator);
+        String toJson = new Gson().toJson(csvFileList);
+        return toJson;
     }
 
     private void sort(List<IndiaCensusCSV> csvFileList, Comparator<IndiaCensusCSV> censusComparator) {
