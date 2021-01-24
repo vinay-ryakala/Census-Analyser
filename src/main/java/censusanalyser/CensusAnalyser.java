@@ -17,12 +17,12 @@ public class CensusAnalyser
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
             Iterator<IndiaCensusCSV> censusCSVIterator = csvBuilder.
-                                getCSVFileIterator(reader,IndiaCensusCSV.class);
+                    getCSVFileIterator(reader,IndiaCensusCSV.class);
             return this.getCount(censusCSVIterator);
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | CSVBuilderException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.ERROR_FROM_CSV);
         }
@@ -33,12 +33,12 @@ public class CensusAnalyser
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCsvBuilder();
             Iterator<IndiaStateCodeCSV> censusCSVIterator =  csvBuilder.
-                                getCSVFileIterator(reader,IndiaStateCodeCSV.class);
+                    getCSVFileIterator(reader,IndiaStateCodeCSV.class);
             return this.getCount(censusCSVIterator);
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | CSVBuilderException e) {
             throw new CensusAnalyserException(e.getMessage(),
                     CensusAnalyserException.ExceptionType.ERROR_FROM_CSV);
         }
@@ -47,7 +47,7 @@ public class CensusAnalyser
     private <E> int getCount(Iterator<E> iterator){
         Iterable<E> csvIterable = () -> iterator;
         int numOfEntries = (int) StreamSupport.stream(csvIterable.spliterator(), false)
-                             .count();
+                .count();
         return numOfEntries;
     }
 }
